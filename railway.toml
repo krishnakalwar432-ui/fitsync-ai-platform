@@ -1,0 +1,34 @@
+# Railway Configuration for FitSync AI Platform
+
+# Build configuration
+[build]
+builder = \"NIXPACKS\"
+builder = \"nodejs\"
+
+# Build command
+build = \"npm install && npm run build\"
+
+# Start command
+start = \"npm start\"
+
+# Healthcheck
+healthcheck = \"/api/health\"
+healthcheck_timeout = 20
+healthcheck_interval = 60
+
+# Environment variables
+[deploy]
+variables = [
+  \"NODE_ENV=production\",
+  \"NEXTAUTH_URL=${{RAILWAY_STATIC_URL}}\",
+  \"DATABASE_URL=${{DATABASE_URL}}\"
+]
+
+# Domains
+[environments.production]
+domain = \"fitsync-ai.up.railway.app\"
+
+# Railway specific configurations
+[railway]
+region = \"us-west1\"
+builder = \"nixpacks\"

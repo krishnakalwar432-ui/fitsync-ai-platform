@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { TrendingUp, Target, Zap, Calendar, Award, Activity, Clock, Flame } from "lucide-react"
+import MotivationalQuotes from "./MotivationalQuotes"
 
 export default function Dashboard() {
   const [currentTime, setCurrentTime] = useState(new Date())
@@ -65,7 +66,15 @@ export default function Dashboard() {
           <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
             Your Dashboard
           </h1>
-          <p className="text-xl text-gray-400">Track your progress and stay motivated with AI-powered insights</p>
+          <p className="text-xl text-gray-400 mb-6">Track your progress and stay motivated with AI-powered insights</p>
+          
+          {/* Daily Motivation */}
+          <MotivationalQuotes 
+            variant="banner" 
+            autoRotate={true} 
+            rotationInterval={8000}
+            className="max-w-2xl mx-auto"
+          />
         </div>
 
         {/* Stats Grid */}

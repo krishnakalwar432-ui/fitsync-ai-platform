@@ -1,0 +1,155 @@
+{
+  "name": "FitSync AI - Personal Fitness Assistant",
+  "short_name": "FitSync AI",
+  "description": "AI-powered fitness assistant for personalized workouts, nutrition planning, and progress tracking",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait-primary",
+  "categories": ["health", "fitness", "lifestyle"],
+  "lang": "en",
+  "dir": "ltr",
+  "scope": "/",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "/pwa/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/pwa/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/pwa/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/pwa/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/pwa/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/pwa/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/pwa/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/pwa/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/pwa/screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "FitSync AI Dashboard - Wide View"
+    },
+    {
+      "src": "/pwa/screenshot-narrow.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "FitSync AI Mobile View"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Start Workout",
+      "short_name": "Workout",
+      "description": "Quickly start a new workout session",
+      "url": "/workout?shortcut=true",
+      "icons": [
+        {
+          "src": "/pwa/shortcut-workout.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "AI Chat",
+      "short_name": "Chat",
+      "description": "Get instant fitness advice from AI",
+      "url": "/?chat=open",
+      "icons": [
+        {
+          "src": "/pwa/shortcut-chat.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Nutrition Planner",
+      "short_name": "Nutrition",
+      "description": "Plan your meals and track nutrition",
+      "url": "/nutrition?shortcut=true",
+      "icons": [
+        {
+          "src": "/pwa/shortcut-nutrition.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Progress Dashboard",
+      "short_name": "Progress",
+      "description": "View your fitness progress and stats",
+      "url": "/dashboard?shortcut=true",
+      "icons": [
+        {
+          "src": "/pwa/shortcut-progress.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "handle_links": "preferred",
+  "launch_handler": {
+    "client_mode": "navigate-new"
+  },
+  "protocol_handlers": [
+    {
+      "protocol": "web+fitsync",
+      "url": "/workout?data=%s"
+    }
+  ],
+  "file_handlers": [
+    {
+      "action": "/import",
+      "accept": {
+        "application/json": [".json"],
+        "text/csv": [".csv"]
+      },
+      "launch_type": "single-client"
+    }
+  ]
+}

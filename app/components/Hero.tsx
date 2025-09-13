@@ -1,7 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import { Target, Zap, TrendingUp, ArrowRight } from "lucide-react"
+import { useState, useEffect } from "react"
+import { Target, Zap, TrendingUp, ArrowRight, Play, Quote, Sparkles } from "lucide-react"
 
 interface HeroProps {
   setActiveSection: (section: string) => void
@@ -189,36 +189,95 @@ export default function Hero({ setActiveSection }: HeroProps) {
     }
   }
 
+  // Motivational quotes
+  const motivationalQuotes = [
+    "The body achieves what the mind believes.",
+    "Success starts with self-discipline.",
+    "Push yourself because no one else is going to do it for you.",
+    "Great things never come from comfort zones.",
+    "Your only limit is your mind.",
+    "Wake up. Work out. Look hot. Kick ass.",
+    "Sweat is just fat crying.",
+    "Strong is the new skinny."
+  ]
+
+  const [currentQuote, setCurrentQuote] = useState(0)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentQuote((prev) => (prev + 1) % motivationalQuotes.length)
+    }, 4000)
+    return () => clearInterval(interval)
+  }, [])
+
   return (
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Video Background Simulation */}
-      <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-purple-900/20 to-cyan-900/20">
-        <div className="absolute inset-0 bg-[url('/placeholder.svg?height=1080&width=1920&text=Fitness+Background')] bg-cover bg-center opacity-20"></div>
-        <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/50 to-transparent"></div>
+      {/* Fullscreen Video Background */}
+      <div className="absolute inset-0">
+        {/* Video element placeholder - replace with actual video */}
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-purple-900/30 to-cyan-900/30">
+          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80')] bg-cover bg-center opacity-40"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/70 to-gray-900/30"></div>
+        </div>
+        
+        {/* Play button overlay for video */}
+        <button className="absolute top-8 right-8 bg-black/50 backdrop-blur-sm text-white p-4 rounded-full hover:bg-black/70 transition-all duration-300 group">
+          <Play className="h-6 w-6 group-hover:scale-110 transition-transform" />
+          <span className="sr-only">Play background video</span>
+        </button>
       </div>
 
-      {/* Animated Background Elements */}
+      {/* Enhanced Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-gradient-to-r from-cyan-500/10 to-purple-500/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-r from-cyan-400/5 to-purple-400/5 rounded-full blur-2xl animate-pulse delay-2000"></div>
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div className="mb-8">
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent animate-pulse">
-            Transform Your Body
-          </h1>
-          <h2 className="text-2xl md:text-4xl font-semibold mb-4 text-gray-200">With Professional Fitness Guidance</h2>
-          <p className="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
-            Master your fitness journey with comprehensive workout guides, detailed exercise instructions, and
-            professional training programs designed for all skill levels.
+        {/* Motivational Quote Banner */}
+        <div className="mb-8 bg-black/20 backdrop-blur-sm border border-cyan-500/20 rounded-2xl p-6">
+          <div className="flex items-center justify-center mb-3">
+            <Quote className="h-6 w-6 text-cyan-400 mr-2" />
+            <Sparkles className="h-5 w-5 text-yellow-400 animate-pulse" />
+          </div>
+          <p className="text-lg md:text-xl text-white font-medium italic transition-all duration-1000">
+            "{motivationalQuotes[currentQuote]}"
           </p>
         </div>
 
+        <div className="mb-12">
+          <h1 className="text-6xl md:text-8xl font-bold mb-6 bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent drop-shadow-2xl">
+            FitSync AI
+          </h1>
+          <h2 className="text-3xl md:text-5xl font-semibold mb-6 text-white drop-shadow-lg">
+            Transform Your Body with AI
+          </h2>
+          <p className="text-xl md:text-2xl text-gray-200 max-w-4xl mx-auto leading-relaxed mb-8">
+            Experience the future of fitness with AI-powered personalization, real-time coaching, and smart progress tracking.
+          </p>
+          
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
+            <button
+              onClick={() => setActiveSection("workouts")}
+              className="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-600 hover:to-purple-700 text-white font-bold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-2xl shadow-cyan-500/25 text-lg"
+            >
+              Explore Workouts
+            </button>
+            <button
+              onClick={() => setActiveSection("nutrition")}
+              className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-bold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-2xl shadow-purple-500/25 text-lg"
+            >
+              AI Nutrition Plans
+            </button>
+          </div>
+        </div>
+
         {/* AI Workout Generator */}
-        <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-8 mb-8 border border-cyan-500/20 shadow-2xl shadow-cyan-500/10">
-          <h3 className="text-2xl font-bold mb-6 text-cyan-400 flex items-center justify-center">
-            <Zap className="mr-2 h-6 w-6" />
+        <div className="bg-black/40 backdrop-blur-md rounded-3xl p-8 mb-12 border border-cyan-500/30 shadow-2xl shadow-cyan-500/20">
+          <h3 className="text-3xl font-bold mb-8 text-cyan-400 flex items-center justify-center">
+            <Zap className="mr-3 h-8 w-8 animate-pulse" />
             AI Smart Workout Generator
           </h3>
 
@@ -256,11 +315,11 @@ export default function Hero({ setActiveSection }: HeroProps) {
           <button
             onClick={handleGetStarted}
             disabled={!userGoal || !fitnessLevel}
-            className="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-600 hover:to-purple-700 disabled:from-gray-600 disabled:to-gray-700 text-white font-bold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 disabled:scale-100 shadow-lg shadow-cyan-500/25 flex items-center mx-auto"
+            className="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-600 hover:to-purple-700 disabled:from-gray-600 disabled:to-gray-700 text-white font-bold py-5 px-10 rounded-xl transition-all duration-300 transform hover:scale-105 disabled:scale-100 shadow-2xl shadow-cyan-500/30 flex items-center mx-auto text-lg"
           >
-            <Target className="mr-2 h-5 w-5" />
+            <Target className="mr-3 h-6 w-6" />
             Generate My AI Workout Plan
-            <ArrowRight className="ml-2 h-5 w-5" />
+            <ArrowRight className="ml-3 h-6 w-6" />
           </button>
         </div>
 
@@ -268,22 +327,24 @@ export default function Hero({ setActiveSection }: HeroProps) {
         {generatedPlan && (
           <div
             id="generated-plan"
-            className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-8 mb-8 border border-green-500/20 shadow-2xl shadow-green-500/10"
+            className="bg-black/40 backdrop-blur-md rounded-3xl p-8 mb-12 border border-green-500/30 shadow-2xl shadow-green-500/20 animate-fadeIn"
           >
             <h3 className="text-2xl font-bold mb-6 text-green-400 flex items-center justify-center">
               <Target className="mr-2 h-6 w-6" />
               Your Personalized Workout Plan
             </h3>
 
-            <div className="bg-gray-700/50 rounded-xl p-6 mb-6">
-              <h4 className="text-xl font-bold text-cyan-400 mb-2">{generatedPlan.name}</h4>
-              <div className="grid md:grid-cols-2 gap-4 text-gray-300">
-                <p>
-                  <span className="text-purple-400 font-semibold">Duration:</span> {generatedPlan.duration}
-                </p>
-                <p>
-                  <span className="text-purple-400 font-semibold">Frequency:</span> {generatedPlan.frequency}
-                </p>
+            <div className="bg-gradient-to-r from-gray-800/60 to-gray-700/60 rounded-2xl p-8 mb-8 border border-cyan-500/20">
+              <h4 className="text-2xl font-bold text-cyan-400 mb-4">{generatedPlan.name}</h4>
+              <div className="grid md:grid-cols-2 gap-6 text-gray-200">
+                <div className="bg-purple-500/20 rounded-lg p-4">
+                  <span className="text-purple-400 font-semibold text-lg">Duration:</span>
+                  <p className="text-white font-bold text-xl">{generatedPlan.duration}</p>
+                </div>
+                <div className="bg-cyan-500/20 rounded-lg p-4">
+                  <span className="text-cyan-400 font-semibold text-lg">Frequency:</span>
+                  <p className="text-white font-bold text-xl">{generatedPlan.frequency}</p>
+                </div>
               </div>
             </div>
 
@@ -311,13 +372,13 @@ export default function Hero({ setActiveSection }: HeroProps) {
             <div className="mt-6 flex flex-col sm:flex-row gap-4">
               <button
                 onClick={() => setActiveSection("workouts")}
-                className="flex-1 bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300"
+                className="flex-1 bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white font-bold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg"
               >
                 View Exercise Details
               </button>
               <button
                 onClick={() => setActiveSection("dashboard")}
-                className="flex-1 bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300"
+                className="flex-1 bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-bold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg"
               >
                 Track Progress
               </button>
@@ -325,29 +386,35 @@ export default function Hero({ setActiveSection }: HeroProps) {
           </div>
         )}
 
-        {/* Feature Cards */}
+        {/* Enhanced Feature Cards */}
         <div className="grid md:grid-cols-3 gap-8">
-          <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-6 border border-cyan-500/20 hover:border-cyan-500/40 transition-all duration-300 hover:transform hover:scale-105">
-            <Target className="h-12 w-12 text-cyan-400 mx-auto mb-4" />
-            <h3 className="text-xl font-bold mb-2 text-cyan-400">Smart Workouts</h3>
-            <p className="text-gray-400">
-              AI-generated personalized workout plans that adapt to your progress and goals.
+          <div className="bg-black/30 backdrop-blur-md rounded-2xl p-8 border border-cyan-500/30 hover:border-cyan-500/60 transition-all duration-300 hover:transform hover:scale-105 group">
+            <div className="bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-full p-4 w-20 h-20 mx-auto mb-6 group-hover:scale-110 transition-transform">
+              <Target className="h-12 w-12 text-cyan-400 mx-auto" />
+            </div>
+            <h3 className="text-2xl font-bold mb-4 text-cyan-400">AI Smart Workouts</h3>
+            <p className="text-gray-300 text-lg leading-relaxed">
+              Personalized workout plans that evolve with your progress using advanced AI algorithms.
             </p>
           </div>
 
-          <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-6 border border-purple-500/20 hover:border-purple-500/40 transition-all duration-300 hover:transform hover:scale-105">
-            <TrendingUp className="h-12 w-12 text-purple-400 mx-auto mb-4" />
-            <h3 className="text-xl font-bold mb-2 text-purple-400">Progress Analytics</h3>
-            <p className="text-gray-400">
-              Real-time insights and adjustments based on your workout data and performance.
+          <div className="bg-black/30 backdrop-blur-md rounded-2xl p-8 border border-purple-500/30 hover:border-purple-500/60 transition-all duration-300 hover:transform hover:scale-105 group">
+            <div className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full p-4 w-20 h-20 mx-auto mb-6 group-hover:scale-110 transition-transform">
+              <TrendingUp className="h-12 w-12 text-purple-400 mx-auto" />
+            </div>
+            <h3 className="text-2xl font-bold mb-4 text-purple-400">Real-time Analytics</h3>
+            <p className="text-gray-300 text-lg leading-relaxed">
+              Track your progress with detailed analytics and get instant feedback on your performance.
             </p>
           </div>
 
-          <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-6 border border-pink-500/20 hover:border-pink-500/40 transition-all duration-300 hover:transform hover:scale-105">
-            <Zap className="h-12 w-12 text-pink-400 mx-auto mb-4" />
-            <h3 className="text-xl font-bold mb-2 text-pink-400">Nutrition AI</h3>
-            <p className="text-gray-400">
-              Custom meal plans generated based on your dietary preferences and fitness goals.
+          <div className="bg-black/30 backdrop-blur-md rounded-2xl p-8 border border-pink-500/30 hover:border-pink-500/60 transition-all duration-300 hover:transform hover:scale-105 group">
+            <div className="bg-gradient-to-br from-pink-500/20 to-red-500/20 rounded-full p-4 w-20 h-20 mx-auto mb-6 group-hover:scale-110 transition-transform">
+              <Zap className="h-12 w-12 text-pink-400 mx-auto" />
+            </div>
+            <h3 className="text-2xl font-bold mb-4 text-pink-400">Nutrition Intelligence</h3>
+            <p className="text-gray-300 text-lg leading-relaxed">
+              Custom meal plans and nutrition tracking powered by AI to fuel your fitness goals.
             </p>
           </div>
         </div>
