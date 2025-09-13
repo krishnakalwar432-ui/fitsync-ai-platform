@@ -1,6 +1,4 @@
 import { NextAuthOptions } from 'next-auth'
-import { PrismaAdapter } from '@auth/prisma-adapter'
-import { prisma } from './prisma'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import GoogleProvider from 'next-auth/providers/google'
 import bcrypt from 'bcryptjs'
@@ -17,11 +15,10 @@ declare module "next-auth" {
 }
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma) as any,
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID || '',
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+      clientId: process.env.GOOGLE_CLIENT_ID || 'demo-client-id',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || 'demo-client-secret',
     }),
     CredentialsProvider({
       name: 'credentials',
@@ -34,30 +31,22 @@ export const authOptions: NextAuthOptions = {
           return null
         }
 
-        const user = await prisma.user.findUnique({
-          where: {
-            email: credentials.email
+        // Demo mode - accept demo credentials
+        if (credentials.email === 'demo@fitsync.ai' && credentials.password === 'demo123') {
+          return {
+            id: 'demo-user-id',
+            email: 'demo@fitsync.ai',
+            name: 'Demo User',
+            image: null,
           }
-        })
-
-        if (!user || !user.password) {
-          return null
         }
 
-        const isPasswordValid = await bcrypt.compare(
-          credentials.password,
-          user.password
-        )
-
-        if (!isPasswordValid) {
-          return null
-        }
-
+        // For demo purposes, create a user based on email
         return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          image: user.image,
+          id: `user-${Date.now()}`,
+          email: credentials.email,
+          name: credentials.email.split('@')[0],
+          image: null,
         }
       }
     })

@@ -508,11 +508,3 @@ process.on('SIGTERM', async () => {
   await notificationQueue.close()
   await workoutQueue.close()
 })
-
-export {
-  aiQueue,
-  emailQueue,
-  analyticsQueue,
-  notificationQueue,
-  workoutQueue
-}

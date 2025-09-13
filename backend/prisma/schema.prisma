@@ -1,0 +1,444 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User Models
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  password     String
+  name         String
+  dateOfBirth  DateTime
+  fitnessLevel FitnessLevel
+  goals        String[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  lastLoginAt  DateTime?
+
+  // Relations
+  profile         UserProfile?
+  subscription    Subscription?
+  workoutPlans    WorkoutPlan[]
+  workoutSessions WorkoutSession[]
+  mealPlans       MealPlan[]
+  nutritionLogs   NutritionLog[]
+  goals_relation  Goal[]
+  aiChatSessions  AIChatSession[]
+  communityPosts  CommunityPost[]
+  socialConnections SocialConnection[]
+  achievements    UserAchievement[]
+
+  @@map("users")
+}
+
+model UserProfile {
+  id                    String       @id @default(cuid())
+  userId                String       @unique
+  height                Float?       // in cm
+  weight                Float?       // in kg
+  activityLevel         ActivityLevel
+  dietaryRestrictions   String[]
+  medicalConditions     String[]
+  emergencyContact      String?
+  preferredWorkoutTime  String?
+  fitnessExperience     Int?         // years
+  injuryHistory         String[]
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_profiles")
+}
+
+// Subscription Models
+model Subscription {
+  id            String           @id @default(cuid())
+  userId        String           @unique
+  plan          SubscriptionPlan
+  status        SubscriptionStatus
+  startDate     DateTime
+  endDate       DateTime?
+  stripeId      String?          @unique
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("subscriptions")
+}
+
+// Workout Models
+model Exercise {
+  id               String        @id @default(cuid())
+  name             String
+  description      String?
+  category         ExerciseCategory
+  muscleGroups     String[]
+  equipment        String[]
+  difficulty       FitnessLevel
+  instructions     String[]
+  tips             String[]
+  videoUrl         String?
+  imageUrl         String?
+  caloriesPerMinute Float?
+  
+  workoutPlanExercises WorkoutPlanExercise[]
+  sessionExercises     SessionExercise[]
+
+  @@map("exercises")
+}
+
+model WorkoutPlan {
+  id          String       @id @default(cuid())
+  userId      String
+  name        String
+  description String?
+  difficulty  FitnessLevel
+  duration    Int          // in minutes
+  frequency   Int          // times per week
+  tags        String[]
+  isPublic    Boolean      @default(false)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  
+  user      User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exercises WorkoutPlanExercise[]
+  sessions  WorkoutSession[]
+
+  @@map("workout_plans")
+}
+
+model WorkoutPlanExercise {
+  id           String @id @default(cuid())
+  workoutPlanId String
+  exerciseId   String
+  order        Int
+  sets         Int
+  reps         Int?
+  duration     Int?    // in seconds
+  weight       Float?  // in kg
+  restTime     Int?    // in seconds
+  notes        String?
+  
+  workoutPlan WorkoutPlan @relation(fields: [workoutPlanId], references: [id], onDelete: Cascade)
+  exercise    Exercise    @relation(fields: [exerciseId], references: [id])
+
+  @@map("workout_plan_exercises")
+}
+
+model WorkoutSession {
+  id             String            @id @default(cuid())
+  userId         String
+  workoutPlanId  String?
+  name           String
+  startedAt      DateTime          @default(now())
+  completedAt    DateTime?
+  plannedDuration Int              // in minutes
+  actualDuration Int?             // in minutes
+  status         SessionStatus
+  notes          String?
+  rating         Int?             // 1-5 stars
+  caloriesBurned Int?
+  
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workoutPlan WorkoutPlan?      @relation(fields: [workoutPlanId], references: [id])
+  exercises   SessionExercise[]
+
+  @@map("workout_sessions")
+}
+
+model SessionExercise {
+  id        String @id @default(cuid())
+  sessionId String
+  exerciseId String
+  order     Int
+  sets      Json[] // Array of {reps?, duration?, weight?, completed}
+  notes     String?
+  
+  session  WorkoutSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  exercise Exercise       @relation(fields: [exerciseId], references: [id])
+
+  @@map("session_exercises")
+}
+
+// Nutrition Models
+model Food {
+  id            String  @id @default(cuid())
+  name          String
+  brand         String?
+  barcode       String? @unique
+  category      String
+  caloriesPer100g Float
+  protein       Float   // grams per 100g
+  carbs         Float   // grams per 100g
+  fat           Float   // grams per 100g
+  fiber         Float?  // grams per 100g
+  sugar         Float?  // grams per 100g
+  sodium        Float?  // mg per 100g
+  
+  mealPlanFoods MealPlanFood[]
+  nutritionLogs NutritionLogEntry[]
+
+  @@map("foods")
+}
+
+model MealPlan {
+  id            String @id @default(cuid())
+  userId        String
+  name          String
+  description   String?
+  targetCalories Int
+  targetProtein Float?
+  targetCarbs   Float?
+  targetFat     Float?
+  startDate     DateTime
+  endDate       DateTime?
+  isActive      Boolean @default(true)
+  
+  user  User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  meals MealPlanMeal[]
+
+  @@map("meal_plans")
+}
+
+model MealPlanMeal {
+  id         String @id @default(cuid())
+  mealPlanId String
+  name       String
+  type       MealType
+  targetTime String? // e.g., "08:00"
+  
+  mealPlan MealPlan       @relation(fields: [mealPlanId], references: [id], onDelete: Cascade)
+  foods    MealPlanFood[]
+
+  @@map("meal_plan_meals")
+}
+
+model MealPlanFood {
+  id       String @id @default(cuid())
+  mealId   String
+  foodId   String
+  quantity Float  // in grams
+  
+  meal MealPlanMeal @relation(fields: [mealId], references: [id], onDelete: Cascade)
+  food Food         @relation(fields: [foodId], references: [id])
+
+  @@map("meal_plan_foods")
+}
+
+model NutritionLog {
+  id     String   @id @default(cuid())
+  userId String
+  date   DateTime
+  
+  user    User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  entries NutritionLogEntry[]
+
+  @@unique([userId, date])
+  @@map("nutrition_logs")
+}
+
+model NutritionLogEntry {
+  id            String @id @default(cuid())
+  nutritionLogId String
+  foodId        String
+  mealType      MealType
+  quantity      Float  // in grams
+  timestamp     DateTime @default(now())
+  
+  nutritionLog NutritionLog @relation(fields: [nutritionLogId], references: [id], onDelete: Cascade)
+  food         Food         @relation(fields: [foodId], references: [id])
+
+  @@map("nutrition_log_entries")
+}
+
+// Goal Models
+model Goal {
+  id          String     @id @default(cuid())
+  userId      String
+  title       String
+  description String?
+  type        GoalType
+  targetValue Float
+  currentValue Float     @default(0)
+  unit        String
+  targetDate  DateTime?
+  status      GoalStatus @default(ACTIVE)
+  isActive    Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("goals")
+}
+
+// AI Chat Models
+model AIChatSession {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  user     User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages AIChatMessage[]
+
+  @@map("ai_chat_sessions")
+}
+
+model AIChatMessage {
+  id        String   @id @default(cuid())
+  sessionId String
+  role      MessageRole
+  content   String
+  timestamp DateTime @default(now())
+  
+  session AIChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@map("ai_chat_messages")
+}
+
+// Community Models
+model CommunityPost {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  content   String
+  category  String
+  tags      String[]
+  likes     Int      @default(0)
+  comments  Int      @default(0)
+  isPublic  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("community_posts")
+}
+
+model SocialConnection {
+  id         String           @id @default(cuid())
+  userId     String
+  friendId   String
+  status     ConnectionStatus
+  createdAt  DateTime         @default(now())
+  
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  friend User @relation(fields: [friendId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, friendId])
+  @@map("social_connections")
+}
+
+// Achievement Models
+model Achievement {
+  id          String @id @default(cuid())
+  name        String @unique
+  description String
+  icon        String
+  category    String
+  requirement Json   // Flexible requirement definition
+  
+  userAchievements UserAchievement[]
+
+  @@map("achievements")
+}
+
+model UserAchievement {
+  id            String    @id @default(cuid())
+  userId        String
+  achievementId String
+  unlockedAt    DateTime  @default(now())
+  
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement Achievement @relation(fields: [achievementId], references: [id])
+
+  @@unique([userId, achievementId])
+  @@map("user_achievements")
+}
+
+// Enums
+enum FitnessLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum ActivityLevel {
+  SEDENTARY
+  LIGHT
+  MODERATE
+  ACTIVE
+  VERY_ACTIVE
+}
+
+enum ExerciseCategory {
+  STRENGTH
+  CARDIO
+  FLEXIBILITY
+  BALANCE
+  SPORTS
+  FUNCTIONAL
+}
+
+enum SessionStatus {
+  PLANNED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum MealType {
+  BREAKFAST
+  LUNCH
+  DINNER
+  SNACK
+}
+
+enum GoalType {
+  WEIGHT_LOSS
+  WEIGHT_GAIN
+  MUSCLE_GAIN
+  ENDURANCE
+  STRENGTH
+  FLEXIBILITY
+  GENERAL_FITNESS
+}
+
+enum GoalStatus {
+  ACTIVE
+  COMPLETED
+  PAUSED
+  CANCELLED
+}
+
+enum MessageRole {
+  USER
+  ASSISTANT
+}
+
+enum SubscriptionPlan {
+  FREE
+  PREMIUM
+  PROFESSIONAL
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  INACTIVE
+  CANCELLED
+  PAST_DUE
+}
+
+enum ConnectionStatus {
+  PENDING
+  ACCEPTED
+  BLOCKED
+}

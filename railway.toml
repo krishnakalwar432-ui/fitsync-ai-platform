@@ -2,33 +2,41 @@
 
 # Build configuration
 [build]
-builder = \"NIXPACKS\"
-builder = \"nodejs\"
+builder = "nixpacks"
+
+[deploy]
+startCommand = "npm start"
+restartPolicyType = "ON_FAILURE"
+
+[env]
+NODE_ENV = "production"
+NEXT_TELEMETRY_DISABLED = "1"
+PORT = "$PORT"
 
 # Build command
-build = \"npm install && npm run build\"
+build = "npm install && npm run build"
 
 # Start command
-start = \"npm start\"
+start = "npm start"
 
 # Healthcheck
-healthcheck = \"/api/health\"
+healthcheck = "/api/health"
 healthcheck_timeout = 20
 healthcheck_interval = 60
 
 # Environment variables
 [deploy]
 variables = [
-  \"NODE_ENV=production\",
-  \"NEXTAUTH_URL=${{RAILWAY_STATIC_URL}}\",
-  \"DATABASE_URL=${{DATABASE_URL}}\"
+  "NODE_ENV=production",
+  "NEXTAUTH_URL=${{RAILWAY_STATIC_URL}}",
+  "DATABASE_URL=${{DATABASE_URL}}"
 ]
 
 # Domains
 [environments.production]
-domain = \"fitsync-ai.up.railway.app\"
+domain = "fitsync-ai.up.railway.app"
 
 # Railway specific configurations
 [railway]
-region = \"us-west1\"
-builder = \"nixpacks\"
+region = "us-west1"
+builder = "nixpacks"

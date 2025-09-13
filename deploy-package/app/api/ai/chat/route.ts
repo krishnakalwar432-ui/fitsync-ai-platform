@@ -25,41 +25,56 @@ export async function POST(request: Request) {
     const body = await request.json()
     const { message, topic } = chatRequestSchema.parse(body)
 
-    // Get user profile for personalized recommendations
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      include: {
-        progressLogs: {
-          orderBy: { date: 'desc' },
-          take: 3
-        },
-        workouts: {
-          orderBy: { createdAt: 'desc' },
-          take: 5
-        },
-        nutritionPlans: {
-          where: { isActive: true },
-          take: 1
-        }
-      }
-    })
-
-    if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 })
+    // Mock user context for demo mode
+    const userContext = {
+      age: 25,
+      gender: 'unspecified',
+      height: 175,
+      weight: 70,
+      activityLevel: 'MODERATELY_ACTIVE',
+      fitnessGoals: ['general_fitness'],
+      dietaryRestrictions: [],
+      recentWorkouts: [],
+      latestProgress: null,
+      activeNutritionPlan: null
     }
 
-    // Build context for AI
-    const userContext = {
-      age: user.age,
-      gender: user.gender,
-      height: user.height,
-      weight: user.weight,
-      activityLevel: user.activityLevel,
-      fitnessGoals: user.fitnessGoals,
-      dietaryRestrictions: user.dietaryRestrictions,
-      recentWorkouts: user.workouts.map(w => ({ name: w.name, category: w.category })),
-      latestProgress: user.progressLogs[0],
-      activeNutritionPlan: user.nutritionPlans[0]
+    // Try to get user profile from database if available
+    if (prisma) {
+      try {
+        const user = await prisma.user.findUnique({
+          where: { id: session.user.id },
+          include: {
+            progressLogs: {
+              orderBy: { date: 'desc' },
+              take: 3
+            },
+            workouts: {
+              orderBy: { createdAt: 'desc' },
+              take: 5
+            },
+            nutritionPlans: {
+              where: { isActive: true },
+              take: 1
+            }
+          }
+        })
+
+        if (user) {
+          userContext.age = user.age || 25
+          userContext.gender = user.gender || 'unspecified'
+          userContext.height = user.height || 175
+          userContext.weight = user.weight || 70
+          userContext.activityLevel = user.activityLevel || 'MODERATELY_ACTIVE'
+          userContext.fitnessGoals = user.fitnessGoals || ['general_fitness']
+          userContext.dietaryRestrictions = user.dietaryRestrictions || []
+          userContext.recentWorkouts = user.workouts.map(w => ({ name: w.name, category: w.category })) || []
+          userContext.latestProgress = user.progressLogs[0] || null
+          userContext.activeNutritionPlan = user.nutritionPlans[0] || null
+        }
+      } catch (dbError) {
+        console.log('Database not available, using demo data:', dbError)
+      }
     }
 
     const systemPrompt = `You are a professional AI fitness and nutrition coach. You provide personalized advice based on user data.
@@ -88,17 +103,23 @@ Guidelines:
 
     const aiResponse = completion.choices[0]?.message?.content || "I'm sorry, I couldn't generate a response."
 
-    // Save chat history
-    await prisma.aIChat.create({
-      data: {
-        userId: session.user.id,
-        messages: [
-          { role: "user", content: message },
-          { role: "assistant", content: aiResponse }
-        ],
-        topic: topic || 'general'
+    // Save chat history if database is available
+    if (prisma) {
+      try {
+        await prisma.aIChat.create({
+          data: {
+            userId: session.user.id,
+            messages: [
+              { role: "user", content: message },
+              { role: "assistant", content: aiResponse }
+            ],
+            topic: topic || 'general'
+          }
+        })
+      } catch (dbError) {
+        console.log('Could not save chat history, database not available')
       }
-    })
+    }
 
     return NextResponse.json({
       message: aiResponse,
