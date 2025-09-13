@@ -8,8 +8,8 @@ const API_CONFIG = {
     WS_URL: 'ws://localhost:8000'
   },
   PRODUCTION: {
-    BASE_URL: process.env.NEXT_PUBLIC_API_URL || 'https://your-backend.onrender.com',
-    WS_URL: process.env.NEXT_PUBLIC_WS_URL || 'wss://your-backend.onrender.com'
+    BASE_URL: process.env.NEXT_PUBLIC_API_URL || 'https://fitsync-ai-backend.onrender.com',
+    WS_URL: process.env.NEXT_PUBLIC_WS_URL || 'wss://fitsync-ai-backend.onrender.com'
   }
 };
 
