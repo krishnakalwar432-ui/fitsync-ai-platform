@@ -1,0 +1,30 @@
+# Quick Deployment Commands for FitSync AI
+
+# 1. Create GitHub repo manually: https://github.com/new
+# Name: fitsync-ai-platform (Public)
+
+# 2. Execute these commands:
+git remote add origin https://github.com/YOUR_USERNAME/fitsync-ai-platform.git
+git branch -M main  
+git push -u origin main
+
+# 3. Render Backend: https://dashboard.render.com/new/web
+# - Connect repo: fitsync-ai-platform
+# - Root: backend
+# - Build: npm install --legacy-peer-deps && npm run build
+# - Start: npm start
+
+# 4. Render Database: https://dashboard.render.com/new/database
+# - Name: fitsync-ai-db
+# - Copy DATABASE_URL
+
+# 5. Environment Variables in Render:
+NODE_ENV=production
+PORT=10000
+FRONTEND_URL=https://ai-fitness-platform-dn6v1yomv-krishnas-projects-8872b996.vercel.app
+JWT_SECRET=fitsync-ai-super-secure-jwt-secret-key-2024-render-production
+BCRYPT_ROUNDS=12
+DATABASE_URL=[FROM_RENDER_DB]
+
+# 6. Update Vercel environment:
+NEXT_PUBLIC_API_URL=https://fitsync-ai-backend.onrender.com
