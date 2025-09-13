@@ -5,10 +5,9 @@
   "main": "dist/server.js",
   "scripts": {
     "dev": "nodemon --exec ts-node src/server.ts",
-    "build": "tsc && npm run copy-files",
+    "build": "tsc",
     "start": "node dist/server.js",
-    "copy-files": "cp -r src/public dist/ 2>/dev/null || xcopy /E /I src\\public dist\\public 2>nul || true",
-    "railway:deploy": "npm run build && npm start",
+    "postbuild": "prisma generate",
     "render:deploy": "npm run build && npm start",
     "test": "jest",
     "lint": "eslint src/**/*.ts",

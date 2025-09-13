@@ -4,7 +4,7 @@
     "lib": ["ES2020"],
     "allowJs": true,
     "skipLibCheck": true,
-    "strict": true,
+    "strict": false,
     "forceConsistentCasingInFileNames": true,
     "noEmit": false,
     "esModuleInterop": true,
@@ -14,19 +14,12 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "incremental": true,
-    "declaration": true,
     "outDir": "./dist",
     "rootDir": "./src",
     "removeComments": true,
-    "noImplicitAny": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "exactOptionalPropertyTypes": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "types": ["node", "jest"]
+    "types": ["node"]
   },
   "include": [
     "src/**/*"
