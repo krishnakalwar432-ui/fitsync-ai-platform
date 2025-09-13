@@ -1,0 +1,14 @@
+# MINIMAL ENVIRONMENT VARIABLES FOR RENDER DEPLOYMENT
+# Copy these exact values into Render Dashboard > Environment tab
+
+DATABASE_URL=postgresql://username:password@hostname:5432/database_name
+JWT_SECRET=fitsync-super-secure-jwt-secret-key-2024-production-min-32-chars
+NODE_ENV=production
+FRONTEND_URL=https://your-app.vercel.app
+ALLOWED_ORIGINS=https://your-app.vercel.app,http://localhost:3000
+
+# INSTRUCTIONS:
+# 1. Replace DATABASE_URL with your actual Render PostgreSQL connection string
+# 2. Keep JWT_SECRET as is (it's already 32+ characters)
+# 3. Replace FRONTEND_URL and ALLOWED_ORIGINS with your actual Vercel URL
+# 4. Add these one by one in Render Environment Variables section
