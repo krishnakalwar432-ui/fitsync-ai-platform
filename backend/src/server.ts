@@ -1,11 +1,10 @@
 import express from 'express';
-import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
 import dotenv from 'dotenv';
 import { PrismaClient } from '@prisma/client';
-import Redis from 'redis';
+import { createClient } from 'redis';
 import { createServer } from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 import rateLimit from 'express-rate-limit';
@@ -43,7 +42,7 @@ const io = new SocketIOServer(server, {
 const prisma = new PrismaClient();
 
 // Initialize Redis
-const redis = Redis.createClient({
+const redis = createClient({
   url: process.env.REDIS_URL || 'redis://localhost:6379'
 });
 

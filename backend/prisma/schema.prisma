@@ -33,7 +33,8 @@ model User {
   goals_relation  Goal[]
   aiChatSessions  AIChatSession[]
   communityPosts  CommunityPost[]
-  socialConnections SocialConnection[]
+  socialConnections SocialConnection[] @relation("UserConnections")
+  friendConnections SocialConnection[] @relation("FriendConnections")
   achievements    UserAchievement[]
 
   @@map("users")
@@ -330,8 +331,8 @@ model SocialConnection {
   status     ConnectionStatus
   createdAt  DateTime         @default(now())
   
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  friend User @relation(fields: [friendId], references: [id], onDelete: Cascade)
+  user   User @relation("UserConnections", fields: [userId], references: [id], onDelete: Cascade)
+  friend User @relation("FriendConnections", fields: [friendId], references: [id], onDelete: Cascade)
 
   @@unique([userId, friendId])
   @@map("social_connections")
